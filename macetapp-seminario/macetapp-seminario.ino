@@ -7,7 +7,7 @@
 #include <ESP8266HTTPClient.h>
 // Instancia a la clase Ticker
 Ticker ticker;
-const String codMaceta = "ABC123ABC";
+const String codMaceta = "ABC13ABC";
 const int rele = D2;
  int temp;
  int demora=0;
