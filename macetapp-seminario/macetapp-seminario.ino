@@ -7,13 +7,14 @@
 #include <ESP8266HTTPClient.h>
 // Instancia a la clase Ticker
 Ticker ticker;
-const String codMaceta = "ABC13ABC";
+const String codMaceta = "ABC123ABC";
 const int rele = D2;
  int temp;
  int demora=0;
 // Pin LED azul
 byte pinLed = D4;
-String serverName = "http://192.168.0.132/macetapp/secciones/saveInfoPlanta.php";
+String serverName = "http:///192.168.68.100/secciones/saveInfoPlanta.php";
+const char* host = "http://192.168.68.100:3000/api/planta/saveDatoPlanta";
 void parpadeoLed(){
   // Cambiar de estado el LED
   byte estado = digitalRead(pinLed);
@@ -75,17 +76,43 @@ void loop() {
    
     //Check WiFi connection status
     if(WiFi.status()== WL_CONNECTED){
-        WiFiClient client;
-      HTTPClient http;
+         WiFiClient client;
+      //  HTTPClient http;
       
+//            WiFiClient client;
+        const int httpPort = 80;
+        if (!client.connect(host, httpPort)) {
+          Serial.println("connection failed");
+          return;
+  }
+        String data = "pst=humedad>" + String(temp) +"||codMaceta>" + String(codMaceta) + "||riego>Si";
 
-      String serverPath = serverName + "?humedad=" + String(temp) + "&codMaceta=" + String(codMaceta)+ "&riego=Si";
+       Serial.print("Requesting POST: ");
+       // Send request to the server:
+       client.println("POST / HTTP/1.1");
+       client.println("Host: 192.168.68.100:3000/api/planta/saveDatoPlanta");
+       client.println("Accept: */*");
+       client.println("Content-Type: application/x-www-form-urlencoded");
+       client.print("Content-Length: ");
+       client.println(data.length());
+       client.println();
+       client.print(data);
+        
+        delay(500); // Can be changed
+        if (client.connected()) { 
+          client.stop();  // DISCONNECT FROM THE SERVER
+        }
+        Serial.println();
+        Serial.println("closing connection");
+        delay(5000);
+      
+     // String serverPath = serverName + "?humedad=" + String(temp) + "&codMaceta=" + String(codMaceta)+ "&riego=Si";
       
       // Your Domain name with URL path or IP address with path
-      http.begin(client, serverPath.c_str());
+//      http.begin(client, serverPath.c_str());
       
       // Send HTTP GET request
-      int httpResponseCode = http.GET();
+     /* int httpResponseCode = http.GET();
       
       if (httpResponseCode>0) {
         Serial.print("HTTP Response code: ");
@@ -96,9 +123,9 @@ void loop() {
       else {
         Serial.print("Error code: ");
         Serial.println(httpResponseCode);
-      }
+      }*/
       // Free resources
-      http.end();
+     // http.end();
     }
     else {
       Serial.println("WiFi Disconnected");
