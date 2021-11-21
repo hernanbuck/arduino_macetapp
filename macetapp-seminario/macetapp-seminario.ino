@@ -13,8 +13,8 @@ const int rele = D2;
  int demora=0;
 // Pin LED azul
 byte pinLed = D4;
-String serverName = "http:///192.168.68.100/secciones/saveInfoPlanta.php";
-const char* host = "http://192.168.68.100:3000/api/planta/saveDatoPlanta";
+const char* serverName = "http://192.168.0.11:3000/api/planta/saveDatoPlanta";
+const char* host = "192.168.0.11";
 void parpadeoLed(){
   // Cambiar de estado el LED
   byte estado = digitalRead(pinLed);
@@ -62,70 +62,40 @@ void setup()
 }
 
 void loop() {
-   //Send an HTTP POST request every 10 minutes
-//     temp = analogRead(0); //connect sensor to Analog 0
- /* //TEST Humedad
-  temp = analogRead(0); //connect sensor to Analog 0
-  Serial.println(temp); //print the value to serial port
-  delay(500);
- /**/
-
+   
   temp = analogRead(0); //connect sensor to Analog 0
   Serial.println(temp); //print the value to serial port
   if(temp>350){
    
     //Check WiFi connection status
     if(WiFi.status()== WL_CONNECTED){
-         WiFiClient client;
-      //  HTTPClient http;
-      
-//            WiFiClient client;
-        const int httpPort = 80;
-        if (!client.connect(host, httpPort)) {
-          Serial.println("connection failed");
-          return;
-  }
-        String data = "pst=humedad>" + String(temp) +"||codMaceta>" + String(codMaceta) + "||riego>Si";
-
-       Serial.print("Requesting POST: ");
-       // Send request to the server:
-       client.println("POST / HTTP/1.1");
-       client.println("Host: 192.168.68.100:3000/api/planta/saveDatoPlanta");
-       client.println("Accept: */*");
-       client.println("Content-Type: application/x-www-form-urlencoded");
-       client.print("Content-Length: ");
-       client.println(data.length());
-       client.println();
-       client.print(data);
-        
-        delay(500); // Can be changed
-        if (client.connected()) { 
-          client.stop();  // DISCONNECT FROM THE SERVER
-        }
-        Serial.println();
-        Serial.println("closing connection");
-        delay(5000);
-      
-     // String serverPath = serverName + "?humedad=" + String(temp) + "&codMaceta=" + String(codMaceta)+ "&riego=Si";
+       WiFiClient client;
+      HTTPClient http;
       
       // Your Domain name with URL path or IP address with path
-//      http.begin(client, serverPath.c_str());
+      http.begin(client, serverName);
+
+      // Specify content-type header
+      http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+      // Data to send with HTTP POST
+      String httpRequestData = "humedad="+ String(temp) +"&codMaceta="+ String(codMaceta) + "&riego=si";           
+      // Send HTTP POST request
+      int httpResponseCode = http.POST(httpRequestData);
       
-      // Send HTTP GET request
-     /* int httpResponseCode = http.GET();
-      
-      if (httpResponseCode>0) {
-        Serial.print("HTTP Response code: ");
-        Serial.println(httpResponseCode);
-        String payload = http.getString();
-        Serial.println(payload);
-      }
-      else {
-        Serial.print("Error code: ");
-        Serial.println(httpResponseCode);
-      }*/
+      // If you need an HTTP request with a content type: application/json, use the following:
+      //http.addHeader("Content-Type", "application/json");
+      //int httpResponseCode = http.POST("{\"api_key\":\"tPmAT5Ab3j7F9\",\"sensor\":\"BME280\",\"value1\":\"24.25\",\"value2\":\"49.54\",\"value3\":\"1005.14\"}");
+
+      // If you need an HTTP request with a content type: text/plain
+      //http.addHeader("Content-Type", "text/plain");
+      //int httpResponseCode = http.POST("Hello, World!");
+     
+      Serial.print("HTTP Response code: ");
+      Serial.println(httpResponseCode);
+        
       // Free resources
-     // http.end();
+      http.end();
+     
     }
     else {
       Serial.println("WiFi Disconnected");
@@ -144,35 +114,39 @@ void loop() {
   }else{
   
     //Check WiFi connection status
+    //Check WiFi connection status
     if(WiFi.status()== WL_CONNECTED){
-        WiFiClient client;
-        HTTPClient http;
-      
-      String serverPath = serverName + "?humedad=" + String(temp) + "&codMaceta=" + String(codMaceta )+ "&riego=No";
+       WiFiClient client;
+      HTTPClient http;
       
       // Your Domain name with URL path or IP address with path
-      http.begin(client,serverPath.c_str());
+      http.begin(client, serverName);
+
+      // Specify content-type header
+      http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+      // Data to send with HTTP POST
+      String httpRequestData = "humedad="+ String(temp) +"&codMaceta="+ String(codMaceta) + "&riego=no";           
+      // Send HTTP POST request
+      int httpResponseCode = http.POST(httpRequestData);
       
-      // Send HTTP GET request
-      int httpResponseCode = http.GET();
-      
-      if (httpResponseCode>0) {
-        Serial.print("HTTP Response code: ");
-        Serial.println(httpResponseCode);
-        String payload = http.getString();
-        Serial.println(payload);
-      }
-      else {
-        Serial.print("Error code: ");
-        Serial.println(httpResponseCode);
-      }
+      // If you need an HTTP request with a content type: application/json, use the following:
+      //http.addHeader("Content-Type", "application/json");
+      //int httpResponseCode = http.POST("{\"api_key\":\"tPmAT5Ab3j7F9\",\"sensor\":\"BME280\",\"value1\":\"24.25\",\"value2\":\"49.54\",\"value3\":\"1005.14\"}");
+
+      // If you need an HTTP request with a content type: text/plain
+      //http.addHeader("Content-Type", "text/plain");
+      //int httpResponseCode = http.POST("Hello, World!");
+     
+      Serial.print("HTTP Response code: ");
+      Serial.println(httpResponseCode);
+        
       // Free resources
       http.end();
+     
     }
     else {
       Serial.println("WiFi Disconnected");
-
-  }
+    }
   demora = demora + 1;
 digitalWrite(rele,HIGH);
   }
