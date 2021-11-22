@@ -13,7 +13,7 @@ const int rele = D2;
  int demora=0;
 // Pin LED azul
 byte pinLed = D4;
-const char* serverName = "http://192.168.0.11:3000/api/planta/saveDatoPlanta";
+const char* serverName = "http://192.168.0.11:3000/api/metrics/saveMetricByCodMaceta";
 const char* host = "192.168.0.11";
 void parpadeoLed(){
   // Cambiar de estado el LED
