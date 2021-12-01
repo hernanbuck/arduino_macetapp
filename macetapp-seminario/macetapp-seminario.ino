@@ -14,7 +14,7 @@ const int rele = D2;
 int temp;
 int demora=0;
 byte pinLed = D4;
-const char* serverName = "http://localhost:3000/api/metrics/ABC123ABC";
+const char* serverName = "http://macetapp.herokuapp.com/api/metrics";
 unsigned long lastTime = 0;
 unsigned long timerDelay = 5000;
 ///**********************///
@@ -52,7 +52,11 @@ void setup()
 ///**********************///
 ///****** loop definition *******///
 void loop() {
+  delay(5000);
   ////**** Get Value by Sensor Humidity *//////
+  temp = analogRead(0); //connect sensor to Analog 0
+  Serial.println(temp); //print the value to serial port
+  delay(5000);
   temp = analogRead(0); //connect sensor to Analog 0
   Serial.println(temp); //print the value to serial port
   ///**********************///
